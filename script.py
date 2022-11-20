@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-#from itertools import product
 import requests
 import json
 from woocommerce import API
@@ -14,11 +13,11 @@ regular_price = "10"
 def changePrice(price, idProduct):
 
     wcapi = API(
-        url= os.getenv('DOMAIN'), # Your store URL
-        consumer_key= os.getenv('CONSUMER_KEY'), # Your consumer key
-        consumer_secret= os.getenv('CONSUMER_SECRET'), # Your consumer secret
-        wp_api=True, # Enable the WP REST API integration
-        version="wc/v3" # WooCommerce WP REST API version
+        url= os.getenv('DOMAIN'), 
+        consumer_key= os.getenv('CONSUMER_KEY'), 
+        consumer_secret= os.getenv('CONSUMER_SECRET'), 
+        wp_api=True, 
+        version="wc/v3" 
     )
 
     data = {
@@ -57,15 +56,16 @@ def getWeather():
     parse_json = json.loads(data)
 
     get_parse_result = parse_json["data"][0]["weather"]["code"]
-    #get_parse_result = 502
     
-    #Use switch statement in Python 3.10
-    if (get_parse_result == 502):
-        changePrice(raised_price, product_to_sell_id)
-    elif(get_parse_result == 800):
-        changePrice(lowered_price, product_to_sell_id)
-    else:
-        changePrice(regular_price, product_to_sell_id)
+    match get_parse_result:
+        case 502:
+            changePrice(raised_price, product_to_sell_id)
 
+        case 800:
+            changePrice(lowered_price, product_to_sell_id)
+
+        case _:
+            changePrice(regular_price, product_to_sell_id)
+    
 
 getWeather()
